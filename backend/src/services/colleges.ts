@@ -36,6 +36,12 @@ export const getColleges = async (filters: CollegeFilters): Promise<{ colleges: 
     idx++
   }
 
+  if (filters.fees_max !== undefined) {
+    conditions.push(`(SELECT COALESCE(AVG(fees_per_year), 0) FROM courses WHERE college_id = colleges.id) <= $${idx}`)
+    params.push(filters.fees_max * 100000)
+    idx++
+  }
+
   const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : ''
 
   const page = filters.page && filters.page > 0 ? filters.page : 1

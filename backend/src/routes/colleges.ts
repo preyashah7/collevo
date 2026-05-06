@@ -14,7 +14,7 @@ const router = express.Router()
 // GET /api/colleges - list with filters + pagination
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { page, limit, search, state, city, type, rating_min, sort } = req.query
+    const { page, limit, search, state, city, type, rating_min, fees_max, sort } = req.query
 
     const filters = {
       page: page ? Number(page) : undefined,
@@ -24,6 +24,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
       city: city ? String(city) : undefined,
       type: type ? String(type) : undefined,
       rating_min: rating_min ? Number(rating_min) : undefined,
+      fees_max: fees_max ? Number(fees_max) : undefined,
       sort: sort ? (String(sort) as any) : undefined
     }
 
