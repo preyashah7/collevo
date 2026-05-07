@@ -79,16 +79,35 @@ export default function FilterSidebar({ filters, onChange, onClear }: FilterSide
       </FilterSection>
 
       <FilterSection title="Fees">
-        <input
-          type="range"
-          min={0}
-          max={20}
-          step={1}
-          value={typeof filters.fees_max === 'number' ? filters.fees_max : 20}
-          onChange={(event) => onChange({ ...filters, fees_max: Number(event.target.value), page: 1 })}
-          className="w-full accent-orange-500"
-        />
-        <p className="text-xs text-gray-500">Up to ₹{typeof filters.fees_max === 'number' ? filters.fees_max : 20}L / year</p>
+        <div className="space-y-2">
+          <input
+            type="range"
+            min={0}
+            max={20}
+            step={0.5}
+            value={typeof filters.fees_max === 'number' ? filters.fees_max : 20}
+            onChange={(event) => onChange({ ...filters, fees_max: Number(event.target.value), page: 1 })}
+            className="w-full accent-orange-500"
+          />
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-gray-600">₹0</span>
+            <span className="text-xs font-medium text-gray-600">₹20L</span>
+          </div>
+          <p className="text-xs text-gray-500">
+            {typeof filters.fees_max === 'number' && filters.fees_max < 20
+              ? `Up to ₹${filters.fees_max}L per year`
+              : 'All fees'}
+          </p>
+          {typeof filters.fees_max === 'number' && filters.fees_max < 20 ? (
+            <button
+              type="button"
+              onClick={() => onChange({ ...filters, fees_max: undefined })}
+              className="text-xs font-medium text-orange-600 hover:text-orange-700"
+            >
+              Clear fees filter
+            </button>
+          ) : null}
+        </div>
       </FilterSection>
 
       <FilterSection title="Exam Accepted">

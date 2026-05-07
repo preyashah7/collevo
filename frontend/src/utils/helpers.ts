@@ -58,3 +58,40 @@ export const getPredictorLabel = (rank: number, closingRank: number): 'safe' | '
 	if (ratio <= 1.1) return 'moderate'
 	return 'reach'
 }
+
+export interface CollegeForScore {
+	overall_rating?: number | null
+	placement_percent?: number | null
+	placement_avg_package_lpa?: number | null
+	nirf_ranking?: number | null
+}
+
+/**
+ * Calculate Collevo Decision Score (0-100)
+ * Proprietary scoring system based on:
+ * - Placement % (30%)
+ * - Rating (25%)
+ * - NIRF Ranking (25%)
+ * - Average Package (20%)
+ */
+export const calculateDecisionScore = (college: CollegeForScore): number => {
+	let score = 0
+
+	// Placement percentage (30%) - weight 0-100
+	const placementScore = ((college.placement_percent || 0) / 100) * 100
+	score += placementScore * 0.3
+
+	// Overall rating (25%) - convert 0-5 scale to 0-100
+	const ratingScore = ((college.overall_rating || 0) / 5) * 100
+	score += ratingScore * 0.25
+
+	// NIRF Ranking (25%) - lower is better, invert to 0-100 scale
+	const rankingScore = college.nirf_ranking ? Math.max(0, 100 - college.nirf_ranking) : 0
+	score += rankingScore * 0.25
+
+	// Average Package (20%) - normalize to 0-100 (assuming max is 50 LPA)
+	const packageScore = Math.min(100, ((college.placement_avg_package_lpa || 0) / 50) * 100)
+	score += packageScore * 0.2
+
+	return Math.round(Math.max(0, Math.min(100, score)))
+}

@@ -2,12 +2,14 @@ import { useNavigate } from 'react-router-dom'
 import CollegeCard from '../components/college/CollegeCard'
 import Button from '../components/ui/Button'
 import EmptyState from '../components/ui/EmptyState'
+import { useAuth } from '../context/AuthContext'
 import { useCompareContext } from '../context/CompareContext'
 import { useSavedContext } from '../context/SavedContext'
 
 export default function Saved(): JSX.Element {
   const navigate = useNavigate()
   const { savedColleges, loading } = useSavedContext()
+  const { isLoggedIn, loading: authLoading } = useAuth()
   const { addToCompare } = useCompareContext()
 
   const onCompareSaved = (): void => {
@@ -26,7 +28,7 @@ export default function Saved(): JSX.Element {
         </Button>
       </div>
 
-      {loading ? (
+      {loading || authLoading ? (
         <div className="grid gap-4 md:grid-cols-2">
           {Array.from({ length: 4 }).map((_, index) => (
             <div key={index} className="h-40 animate-pulse rounded-xl bg-white" />
@@ -34,12 +36,21 @@ export default function Saved(): JSX.Element {
         </div>
       ) : null}
 
-      {!loading && savedColleges.length === 0 ? (
+      {!loading && !authLoading && !isLoggedIn ? (
         <EmptyState
-          icon="💙"
+          icon="heart"
+          title="Sign in to view saved colleges"
+          description="Each account has its own saved list. Log in to start shortlisting colleges on this device."
+          action={{ label: 'Sign In', onClick: () => navigate('/') }}
+        />
+      ) : null}
+
+      {!loading && !authLoading && isLoggedIn && savedColleges.length === 0 ? (
+        <EmptyState
+          icon="heart"
           title="You haven't saved any colleges yet"
           description="Save colleges from the listing page to shortlist your options."
-          action={{ label: 'Browse Colleges →', onClick: () => navigate('/colleges') }}
+          action={{ label: 'Browse Colleges', onClick: () => navigate('/colleges') }}
         />
       ) : null}
 

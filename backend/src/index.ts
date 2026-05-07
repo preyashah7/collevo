@@ -6,6 +6,7 @@ import collegesRouter from './routes/colleges'
 import coursesRouter from './routes/courses'
 import reviewsRouter from './routes/reviews'
 import savedRouter from './routes/saved'
+import authRouter from './routes/auth'
 
 dotenv.config()
 
@@ -26,6 +27,7 @@ app.get('/health', (req, res) => {
 })
 
 // Routes
+app.use('/api/auth', authRouter)
 app.use('/api/colleges', collegesRouter)
 app.use('/api/courses', coursesRouter)
 app.use('/api/reviews', reviewsRouter)

@@ -1,23 +1,24 @@
-import express, { Request, Response, NextFunction } from 'express'
+import express, { Response, NextFunction } from 'express'
 import { query } from '../db/client'
 import { ApiResponse } from '../types'
+import { authenticate, AuthRequest } from '../middleware/auth'
 
 const router = express.Router()
 
-router.get('/:sessionId', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/', authenticate, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const sessionId = String(req.params.sessionId)
-    if (!sessionId) {
-      return res.status(400).json({ success: false, data: [], message: 'Missing session id' } as ApiResponse<unknown[]>)
+    const userId = req.userId
+    if (!userId) {
+      return res.status(401).json({ success: false, data: [], message: 'Authentication required' } as ApiResponse<unknown[]>)
     }
 
     const result = await query(
       `SELECT c.*
        FROM saved_colleges s
        JOIN colleges c ON c.id = s.college_id
-       WHERE s.session_id = $1
+       WHERE s.user_id = $1
        ORDER BY s.created_at DESC`,
-      [sessionId]
+      [userId]
     )
 
     res.json({ success: true, data: result.rows } as ApiResponse<unknown[]>)
@@ -26,37 +27,51 @@ router.get('/:sessionId', async (req: Request, res: Response, next: NextFunction
   }
 })
 
-router.post('/', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/', authenticate, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const sessionId = String(req.body.session_id ?? '')
+    const userId = req.userId
     const collegeId = String(req.body.college_id ?? '')
 
-    if (!sessionId || !collegeId) {
-      return res.status(400).json({ success: false, data: null, message: 'session_id and college_id are required' })
+    if (!userId || !collegeId) {
+      return res.status(400).json({ success: false, data: null, message: 'college_id is required' })
     }
 
     await query(
-      `INSERT INTO saved_colleges (session_id, college_id)
-       VALUES ($1, $2)
-       ON CONFLICT (session_id, college_id) DO NOTHING`,
-      [sessionId, collegeId]
+      `INSERT INTO saved_colleges (user_id, session_id, college_id)
+       VALUES ($1, $2, $3)
+       ON CONFLICT DO NOTHING`,
+      [userId, userId, collegeId]
     )
 
     res.json({ success: true, data: null } as ApiResponse<null>)
   } catch (error) {
-    next(error as Error)
+    console.error('Save college error:', error)
+    return res.status(500).json({
+      success: false,
+      data: null,
+      message: 'We could not save this college right now. Please try again.'
+    } as ApiResponse<null>)
   }
 })
 
-router.delete('/:sessionId/:collegeId', async (req: Request, res: Response, next: NextFunction) => {
+router.delete('/:collegeId', authenticate, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const sessionId = String(req.params.sessionId)
+    const userId = req.userId
     const collegeId = String(req.params.collegeId)
 
-    await query('DELETE FROM saved_colleges WHERE session_id = $1 AND college_id = $2', [sessionId, collegeId])
+    if (!userId) {
+      return res.status(401).json({ success: false, data: null, message: 'Authentication required' } as ApiResponse<null>)
+    }
+
+    await query('DELETE FROM saved_colleges WHERE user_id = $1 AND college_id = $2', [userId, collegeId])
     res.json({ success: true, data: null } as ApiResponse<null>)
   } catch (error) {
-    next(error as Error)
+    console.error('Remove saved college error:', error)
+    return res.status(500).json({
+      success: false,
+      data: null,
+      message: 'We could not remove this college right now. Please try again.'
+    } as ApiResponse<null>)
   }
 })
 

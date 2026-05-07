@@ -21,6 +21,7 @@ export interface College {
   placement_percent: number | null
   placement_companies_count: number | null
   nirf_ranking: number | null
+  min_fees_per_year: number | null
   description: string | null
   is_featured: boolean
 }

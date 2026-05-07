@@ -37,7 +37,7 @@ export const getColleges = async (filters: CollegeFilters): Promise<{ colleges: 
   }
 
   if (filters.fees_max !== undefined) {
-    conditions.push(`(SELECT COALESCE(AVG(fees_per_year), 0) FROM courses WHERE college_id = colleges.id) <= $${idx}`)
+    conditions.push(`(min_fees_per_year <= $${idx} OR min_fees_per_year IS NULL)`)
     params.push(filters.fees_max * 100000)
     idx++
   }
@@ -49,8 +49,8 @@ export const getColleges = async (filters: CollegeFilters): Promise<{ colleges: 
   const offset = (page - 1) * limit
 
   let order = 'ORDER BY is_featured DESC, overall_rating DESC NULLS LAST'
-  if (filters.sort === 'fees_asc') order = 'ORDER BY placement_avg_package_lpa ASC NULLS LAST'
-  if (filters.sort === 'fees_desc') order = 'ORDER BY placement_avg_package_lpa DESC NULLS LAST'
+  if (filters.sort === 'fees_asc') order = 'ORDER BY min_fees_per_year ASC NULLS LAST'
+  if (filters.sort === 'fees_desc') order = 'ORDER BY min_fees_per_year DESC NULLS LAST'
   if (filters.sort === 'ranking') order = 'ORDER BY nirf_ranking ASC NULLS LAST'
 
   const sql = `SELECT * FROM colleges ${where} ${order} LIMIT $${idx} OFFSET $${idx + 1}`

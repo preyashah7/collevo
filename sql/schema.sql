@@ -29,6 +29,19 @@
         nirf_ranking INTEGER,
         description TEXT,
         is_featured BOOLEAN DEFAULT false,
+        min_fees_per_year DECIMAL(12,2),
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+        );
+
+        CREATE TABLE IF NOT EXISTS users (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        phone VARCHAR(20),
+        stream_preference VARCHAR(100),
+        city VARCHAR(100),
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NOW()
         );
@@ -103,9 +116,11 @@
 
         CREATE TABLE IF NOT EXISTS saved_colleges (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        session_id VARCHAR(255) NOT NULL,
+        user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        session_id VARCHAR(255),
         college_id UUID NOT NULL REFERENCES colleges(id) ON DELETE CASCADE,
         created_at TIMESTAMPTZ DEFAULT NOW(),
+        UNIQUE(user_id, college_id),
         UNIQUE(session_id, college_id)
         );
 

@@ -16,15 +16,21 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { page, limit, search, state, city, type, rating_min, fees_max, sort } = req.query
 
+    const parseNumberParam = (value: unknown): number | undefined => {
+      if (value === undefined || value === null || value === '') return undefined
+      const parsed = Number(value)
+      return Number.isFinite(parsed) ? parsed : undefined
+    }
+
     const filters = {
-      page: page ? Number(page) : undefined,
-      limit: limit ? Number(limit) : undefined,
+      page: parseNumberParam(page),
+      limit: parseNumberParam(limit),
       search: search ? String(search) : undefined,
       state: state ? String(state) : undefined,
       city: city ? String(city) : undefined,
       type: type ? String(type) : undefined,
-      rating_min: rating_min ? Number(rating_min) : undefined,
-      fees_max: fees_max ? Number(fees_max) : undefined,
+      rating_min: parseNumberParam(rating_min),
+      fees_max: parseNumberParam(fees_max),
       sort: sort ? (String(sort) as any) : undefined
     }
 

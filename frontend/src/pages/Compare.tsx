@@ -86,8 +86,8 @@ export default function Compare(): JSX.Element {
           <EmptyState
             title="No colleges selected for comparison"
             description="Pick up to 3 colleges from the listing page and compare them here."
-            icon="⚖️"
-            action={{ label: 'Browse Colleges →', onClick: () => (window.location.href = '/colleges') }}
+            icon="balance"
+            action={{ label: 'Browse Colleges', onClick: () => (window.location.href = '/colleges') }}
           />
           <div className="grid gap-4 md:grid-cols-3">
             {Array.from({ length: 3 }).map((_, index) => (
@@ -162,7 +162,7 @@ export default function Compare(): JSX.Element {
                         <td key={`${row.label}-${compareList[index]?.id ?? index}`} className={`px-3 py-3 text-gray-700 ${isWinner ? 'border-l-2 border-green-500 bg-green-50' : ''}`}>
                           <div className="flex items-center gap-2">
                             <span>{display}</span>
-                            {isWinner ? <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-700">✓ Best</span> : null}
+                            {isWinner ? <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-700">Best</span> : null}
                           </div>
                         </td>
                       )

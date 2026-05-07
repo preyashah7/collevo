@@ -70,7 +70,7 @@ export default function CollegeDetail(): JSX.Element {
   if (!college) {
     return (
       <div className="mx-auto max-w-4xl px-4 py-8">
-        <EmptyState title="College not found" description="This college detail page is unavailable right now." icon="🏫" />
+        <EmptyState title="College not found" description="This college detail page is unavailable right now." icon="building" />
       </div>
     )
   }
@@ -104,14 +104,14 @@ export default function CollegeDetail(): JSX.Element {
 
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-sm text-gray-600">★ {formatRating(college.overall_rating)} ({college.total_reviews} reviews)</span>
-            <Button variant="outline" onClick={() => void toggleSave(college)}>{isSaved(college.id) ? '❤ Saved' : '♡ Save'}</Button>
+            <Button variant="outline" onClick={() => void toggleSave(college)}>{isSaved(college.id) ? 'Saved' : 'Save'}</Button>
             <Button variant="outline" onClick={() => (isInCompare(college.id) ? removeFromCompare(college.id) : addToCompare(college))}>
-              {isInCompare(college.id) ? '☑ Compared' : '☐ Compare'}
+              {isInCompare(college.id) ? 'Compared' : 'Compare'}
             </Button>
-            <Button variant="secondary">Brochure ↓</Button>
+            <Button variant="secondary">Brochure</Button>
             {college.website ? (
               <a href={college.website} target="_blank" rel="noreferrer" className="rounded-md bg-orange-500 px-4 py-2 text-sm font-medium text-white">
-                Visit Website ↗
+                Visit Website
               </a>
             ) : null}
           </div>
@@ -164,7 +164,7 @@ export default function CollegeDetail(): JSX.Element {
         </div>
         <div className="mt-4 space-y-3">
           {filteredCourses.length === 0 ? (
-            <EmptyState title="No courses" description="Course data is not available." icon="📚" />
+            <EmptyState title="No courses" description="Course data is not available." icon="book" />
           ) : (
             filteredCourses.map((course) => (
               <article key={course.id} className="rounded-lg border border-gray-200 p-4">
@@ -198,7 +198,7 @@ export default function CollegeDetail(): JSX.Element {
         <h2 className="text-xl font-bold text-gray-900">Placements</h2>
         {placements.length === 0 ? (
           <div className="mt-4">
-            <EmptyState title="Placement data not available" description="Latest placement statistics are missing for this college." icon="📉" />
+            <EmptyState title="Placement data not available" description="Latest placement statistics are missing for this college." icon="chart" />
           </div>
         ) : (
           <div className="mt-4 overflow-auto">
@@ -287,7 +287,7 @@ export default function CollegeDetail(): JSX.Element {
       <section className="mt-10">
         <h2 className="mb-4 text-xl font-bold text-gray-900">You might also like</h2>
         {similar.length === 0 ? (
-          <EmptyState title="No similar colleges" description="Try browsing all colleges to discover alternatives." icon="🧭" action={{ label: 'Browse Colleges', onClick: () => {} }} />
+          <EmptyState title="No similar colleges" description="Try browsing all colleges to discover alternatives." icon="compass" action={{ label: 'Browse Colleges', onClick: () => {} }} />
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {similar.map((item) => (
@@ -296,7 +296,7 @@ export default function CollegeDetail(): JSX.Element {
           </div>
         )}
         <div className="mt-4">
-          <Link to="/colleges" className="text-sm font-medium text-orange-600">Browse all colleges →</Link>
+          <Link to="/colleges" className="text-sm font-medium text-orange-600">Browse all colleges</Link>
         </div>
       </section>
     </div>

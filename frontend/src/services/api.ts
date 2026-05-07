@@ -7,10 +7,49 @@ const api = axios.create({
 	baseURL: BASE_URL
 })
 
+// Add auth interceptor
+api.interceptors.request.use((config) => {
+	const token = localStorage.getItem('collevo_token')
+	if (token) {
+		config.headers.Authorization = `Bearer ${token}`
+	}
+	return config
+})
+
 api.interceptors.response.use(
 	(response) => response,
 	(error) => Promise.reject(error)
 )
+
+export interface RegisterData {
+	name: string
+	email: string
+	password: string
+	phone?: string
+	stream_preference?: string
+	city?: string
+}
+
+export interface User {
+	id: string
+	name: string
+	email: string
+	phone: string | null
+	stream_preference: string | null
+	city: string | null
+}
+
+export const authApi = {
+	register: (data: RegisterData) =>
+		api.post<ApiResponse<{ token: string; user: User }>>('/auth/register', data),
+	login: (email: string, password: string) =>
+		api.post<ApiResponse<{ token: string; user: User }>>('/auth/login', { email, password }),
+	me: (token: string) =>
+		api.get<ApiResponse<User>>('/auth/me', {
+			headers: { Authorization: `Bearer ${token}` }
+		}),
+	logout: () => api.post<ApiResponse<null>>('/auth/logout')
+}
 
 export const collegeApi = {
 	getAll: (filters: CollegeFilters = {}) => {
@@ -26,10 +65,9 @@ export const collegeApi = {
 }
 
 export const savedApi = {
-	getAll: (sessionId: string) => api.get<ApiResponse<College[]>>(`/saved/${sessionId}`),
-	save: (sessionId: string, collegeId: string) =>
-		api.post<ApiResponse<null>>('/saved', { session_id: sessionId, college_id: collegeId }),
-	remove: (sessionId: string, collegeId: string) => api.delete<ApiResponse<null>>(`/saved/${sessionId}/${collegeId}`)
+	getAll: () => api.get<ApiResponse<College[]>>('/saved'),
+	save: (collegeId: string) => api.post<ApiResponse<null>>('/saved', { college_id: collegeId }),
+	remove: (collegeId: string) => api.delete<ApiResponse<null>>(`/saved/${collegeId}`)
 }
 
 export default api

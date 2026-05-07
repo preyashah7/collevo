@@ -14,6 +14,13 @@ const toFilters = (params: URLSearchParams): CollegeFilters => {
   const limit = Number(params.get('limit') || '10')
   const feesMax = params.get('fees_max')
   const ratingMin = params.get('rating_min')
+
+  const parseOptionalNumber = (value: string | null): number | undefined => {
+    if (value === null || value === '') return undefined
+    const parsed = Number(value)
+    return Number.isFinite(parsed) ? parsed : undefined
+  }
+
   return {
     search: params.get('search') || undefined,
     stream: params.get('stream') || undefined,
@@ -24,8 +31,8 @@ const toFilters = (params: URLSearchParams): CollegeFilters => {
     exam: params.get('exam') || undefined,
     page,
     limit,
-    fees_max: feesMax ? Number(feesMax) : undefined,
-    rating_min: ratingMin ? Number(ratingMin) : undefined
+    fees_max: parseOptionalNumber(feesMax),
+    rating_min: parseOptionalNumber(ratingMin)
   }
 }
 
@@ -111,7 +118,7 @@ export default function CollegeList(): JSX.Element {
           <EmptyState
             title="No colleges found"
             description="Try changing filters to broaden your results."
-            icon="🔎"
+            icon="search"
             action={{ label: 'Clear Filters', onClick: clearFilters }}
           />
         ) : null}
