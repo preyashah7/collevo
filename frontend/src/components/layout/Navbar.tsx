@@ -190,6 +190,9 @@ export default function Navbar(): JSX.Element {
           <NavLink to="/colleges" className="block text-sm text-gray-700" onClick={() => setMobileMenuOpen(false)}>
             Colleges
           </NavLink>
+          <NavLink to="/predictor" className="block text-sm text-gray-700" onClick={() => setMobileMenuOpen(false)}>
+            Predictor
+          </NavLink>
           <div className="border-t border-gray-200 pt-3">
             {isLoggedIn && user ? (
               <>
