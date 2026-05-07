@@ -86,7 +86,7 @@ export default function CollegeDetail(): JSX.Element {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6">
-      <CollegeBanner bannerUrl={college.banner_url} name={college.name} />
+      {/* <CollegeBanner bannerUrl={college.banner_url} name={college.name} /> */}
 
       <header className="sticky top-16 z-30 mt-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -134,18 +134,41 @@ export default function CollegeDetail(): JSX.Element {
       </section>
 
       <section id="overview" className="mt-8 rounded-xl border border-gray-200 bg-white p-5">
-        <h2 className="text-xl font-bold text-gray-900">Overview</h2>
-        <p className="mt-3 text-sm text-gray-600">{college.description ?? 'No description available.'}</p>
-        <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-3">
-          <div><dt className="text-gray-500">Established</dt><dd className="font-medium text-gray-800">{college.established_year ?? 'N/A'}</dd></div>
-          <div><dt className="text-gray-500">Campus Size</dt><dd className="font-medium text-gray-800">{college.campus_size_acres ? `${college.campus_size_acres} acres` : 'N/A'}</dd></div>
-          <div><dt className="text-gray-500">Total Students</dt><dd className="font-medium text-gray-800">{college.total_students ?? 'N/A'}</dd></div>
-          <div><dt className="text-gray-500">Total Faculty</dt><dd className="font-medium text-gray-800">{college.total_faculty ?? 'N/A'}</dd></div>
-          <div className="sm:col-span-2 lg:col-span-2">
-            <dt className="text-gray-500">Approvals</dt>
-            <dd className="mt-1 flex flex-wrap gap-1">{(college.approvals ?? []).map((item) => <Badge key={item}>{item}</Badge>)}</dd>
+        <h2 className="text-xl font-bold text-gray-900">About</h2>
+        <p className="mt-3 text-sm leading-relaxed text-gray-600">{college.description ?? 'No description available.'}</p>
+        
+        <div className="mt-6 border-t border-gray-200 pt-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Institution Details</h3>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="rounded-lg bg-gray-50 p-4">
+              <p className="text-xs font-medium text-gray-500 uppercase">Established</p>
+              <p className="mt-2 text-lg font-bold text-gray-900">{college.established_year ?? 'N/A'}</p>
+            </div>
+            <div className="rounded-lg bg-gray-50 p-4">
+              <p className="text-xs font-medium text-gray-500 uppercase">Campus Size</p>
+              <p className="mt-2 text-lg font-bold text-gray-900">{college.campus_size_acres ? `${college.campus_size_acres} acres` : 'N/A'}</p>
+            </div>
+            <div className="rounded-lg bg-gray-50 p-4">
+              <p className="text-xs font-medium text-gray-500 uppercase">Total Students</p>
+              <p className="mt-2 text-lg font-bold text-gray-900">{college.total_students ?? 'N/A'}</p>
+            </div>
+            <div className="rounded-lg bg-gray-50 p-4">
+              <p className="text-xs font-medium text-gray-500 uppercase">Total Faculty</p>
+              <p className="mt-2 text-lg font-bold text-gray-900">{college.total_faculty ?? 'N/A'}</p>
+            </div>
           </div>
-        </dl>
+        </div>
+
+        {(college.approvals ?? []).length > 0 && (
+          <div className="mt-6 border-t border-gray-200 pt-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Approvals & Accreditations</h3>
+            <div className="flex flex-wrap gap-2">
+              {(college.approvals ?? []).map((item) => (
+                <Badge key={item} className="bg-blue-100 text-blue-700">{item}</Badge>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
 
       <section id="courses" className="mt-8 rounded-xl border border-gray-200 bg-white p-5">
